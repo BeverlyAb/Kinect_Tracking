@@ -498,7 +498,7 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                                     this.y_degree = convert_y_degrees(i);
                                     this.shoot = bang(shoot);
                                     // sendPort(this.my_serial, this.x_degree, this.y_degree, this.shoot);
-                                    sendPort(this.my_serial, this.x_degree);
+                                    sendPort(this.my_serial, this.x_degree, this.y_degree);
                                     if (!drawFaceResult)
                                     {
                                         drawFaceResult = true;
@@ -725,13 +725,20 @@ namespace Microsoft.Samples.Kinect.FaceBasics
             }
             stepper++;
         } */
-        public void sendPort(SerialPort my_serial, int x)
+
+        public void sendPort(SerialPort my_serial, int x, int y)
         {
             if (stepper == 90)
             {
             //    this.my_serial.Write(Convert.ToString('s'));
                 this.my_serial.Write(Convert.ToString(x));
                 Debug.WriteLine("x degree " + Convert.ToString(x));
+               // stepper = 0;
+            }
+            if(stepper == 120)
+            {
+                this.my_serial.Write(Convert.ToString(y));
+                Debug.WriteLine("x degree " + Convert.ToString(y));
                 stepper = 0;
             }
             stepper++;
