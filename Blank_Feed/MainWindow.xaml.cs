@@ -492,8 +492,8 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                                 {
                                     // draw face frame results
                                     this.DrawFaceFrameResults(i, this.faceFrameResults[i], dc);
-                                    
-                                    //acquire target info.
+                                   // Debug.WriteLine("face frame results " + this.faceFrameResults[i].FaceFrameFeatures);
+                                        //acquire target info.
                                     this.x_degree = convert_x_degrees(i);
                                     this.y_degree = convert_y_degrees(i);
                                     this.shoot = bang(shoot);
@@ -649,7 +649,7 @@ namespace Microsoft.Samples.Kinect.FaceBasics
         }
 
         /// <summary>
-        //Convert positions to x degrees and sends to motor
+        //Convert positions to x degrees and sends to motor (0 -180)
         /// </summary>
         public int convert_x_degrees(int faceIndex)
         {
@@ -672,23 +672,24 @@ namespace Microsoft.Samples.Kinect.FaceBasics
         }
 
         /// <summary>
-        //Convert positions to y degrees and sends to motor
+        //Convert positions to y degrees and sends to motor (only from 0 - 85)
         /// </summary>
         public int convert_y_degrees(int faceIndex)
         {
             Body body = this.bodies[faceIndex];
             var headJoint = body.Joints[JointType.Head].Position;
             //-0.XXXXXXXXXX to 0.XXXXXXXXX
-            float y_degree = headJoint.Y * 1000; // convert to decimal -800 to 800 range         
+           // Debug.WriteLine(headJoint.Y);
+            float y_degree = headJoint.Y * 1000 + 600; // convert to decimal 0 to 1200 range         
 
-            y_degree = (int)(y_degree / (700 / 90) + 90);
+            y_degree = (int)(y_degree * 85 / 1200);
             if (y_degree < 0)
             {
                 y_degree = 0;
             }
-            else if (y_degree > 180)
+            else if (y_degree > 85)
             {
-                y_degree = 180;
+                y_degree = 80;
             }
             //   Debug.WriteLine("my_serial " + (int)my_serial);
             return (int)y_degree;
@@ -727,20 +728,23 @@ namespace Microsoft.Samples.Kinect.FaceBasics
         } */
 
         public void sendPort(SerialPort my_serial, int x, int y)
-        {
-            if (stepper == 90)
-            {
-            //    this.my_serial.Write(Convert.ToString('s'));
-                this.my_serial.Write(Convert.ToString(x));
+        {//90
+            if (stepper == 70)
+            {5
+                //   this.my_serial.Write(Convert.ToString('s'));
+                //   this.my_serial.Write(Convert.ToString(x));
+                this.my_serial.Write(Convert.ToString(x) + ":" + Convert.ToString(y));
                 Debug.WriteLine("x degree " + Convert.ToString(x));
-               // stepper = 0;
-            }
-            if(stepper == 120)
-            {
-                this.my_serial.Write(Convert.ToString(y));
-                Debug.WriteLine("x degree " + Convert.ToString(y));
+                Debug.WriteLine("y degree " + Convert.ToString(y));
                 stepper = 0;
-            }
+            }//199
+         /*   if(stepper == 100)
+            {
+             //   this.my_serial.Write(Convert.ToString('s'));
+                this.my_serial.Write(Convert.ToString(y));
+                Debug.WriteLine("y degree " + Convert.ToString(y));
+                stepper = 0;
+            } */
             stepper++;
            
         }
