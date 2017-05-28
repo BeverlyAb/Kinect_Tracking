@@ -728,25 +728,17 @@ namespace Microsoft.Samples.Kinect.FaceBasics
         } */
 
         public void sendPort(SerialPort my_serial, int x, int y)
-        {//90
+        {//70
             if (stepper == 70)
-            {5
+            {
                 //   this.my_serial.Write(Convert.ToString('s'));
                 //   this.my_serial.Write(Convert.ToString(x));
                 this.my_serial.Write(Convert.ToString(x) + ":" + Convert.ToString(y));
                 Debug.WriteLine("x degree " + Convert.ToString(x));
                 Debug.WriteLine("y degree " + Convert.ToString(y));
                 stepper = 0;
-            }//199
-         /*   if(stepper == 100)
-            {
-             //   this.my_serial.Write(Convert.ToString('s'));
-                this.my_serial.Write(Convert.ToString(y));
-                Debug.WriteLine("y degree " + Convert.ToString(y));
-                stepper = 0;
-            } */
+            }
             stepper++;
-           
         }
         /// <summary>
         /// Validates face bounding box and face points to be within screen space
