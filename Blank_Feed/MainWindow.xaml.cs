@@ -151,7 +151,7 @@ namespace Microsoft.Samples.Kinect.FaceBasics
         private SerialPort my_serial;
         public int x_degree;
         public int y_degree;
-        public int shoot = 1;
+        public int shoot;
         private bool reset;
 
 
@@ -178,12 +178,6 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                 {
                     MessageBox.Show(e1.Message);
                 }
-          /*      my_serial.Write(Convert.ToString('s'));
-                my_serial.Write(Convert.ToString(90));
-                my_serial.Write(Convert.ToString(90));
-                my_serial.Write(Convert.ToString(90));
-                my_serial.Write(Convert.ToString(0));
-            */    reset = false;
             }
             //////////////////////////
             // one sensor is currently supported
@@ -496,9 +490,8 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                                         //acquire target info.
                                     this.x_degree = convert_x_degrees(i);
                                     this.y_degree = convert_y_degrees(i);
-                                    this.shoot = bang(shoot);
                                     // sendPort(this.my_serial, this.x_degree, this.y_degree, this.shoot);
-                                    sendPort(this.my_serial, this.x_degree, this.y_degree);
+                                    sendPort(this.my_serial, this.x_degree, this.y_degree, this.shoot);
                                     if (!drawFaceResult)
                                     {
                                         drawFaceResult = true;
@@ -532,8 +525,33 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                 }
             }
         }
+        /// <summary> 
+        /// extracts happy info.
+        /// </summary>
+        /// <param name="faceIndex">the index of the face frame corresponding to a specific body in the FOV</param>
+        /// <param name="faceResult">container of all face frame results</param>
+        /// <param name="drawingContext">drawing context to render to</param>
+        private string happy(string faceText)
+        {
+            int HIndex = faceText.IndexOf('H');
+            int colonIndex = faceText.IndexOf(':', HIndex);
+            colonIndex++; // go past space
+            return faceText.Substring(colonIndex + 1, 3);
+        }
+           
 
-        /// <summary> //BA
+        /// <summary> 
+        /// shoot happy people.
+        /// </summary>
+        private int bang(string happy_level)
+        {
+            Debug.WriteLine("happy " + happy_level);
+            if (happy_level.Length == 3 && happy_level[0] == 'Y') //"Yes"
+                return 1;
+            else
+                return 0;
+        }
+        /// <summary>
         /// Draws face frame results
         /// </summary>
         /// <param name="faceIndex">the index of the face frame corresponding to a specific body in the FOV</param>
@@ -561,10 +579,9 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                 foreach (PointF pointF in faceResult.FacePointsInColorSpace.Values)
                 {
                     drawingContext.DrawEllipse(null, drawingPen, new Point(pointF.X, pointF.Y), FacePointRadius, FacePointRadius);
-                //    Debug.WriteLine("face value " + faceResult.FacePointsInColorSpace.Values.ToString());
+               
                 }
             }
-           // Debug.WriteLine("Values " + faceResult.FacePointsInColorSpace.Values);
             string faceText = string.Empty;
 
             // extract each face property information and store it in faceText
@@ -583,7 +600,7 @@ namespace Microsoft.Samples.Kinect.FaceBasics
                     else
                     {
                         faceText += item.Value.ToString() + "\n";
-                       
+                        shoot = bang(happy(faceText)); 
                     }
                 }
             }
@@ -695,47 +712,15 @@ namespace Microsoft.Samples.Kinect.FaceBasics
             return (int)y_degree;
         }
 
-        /// <summary>
-        //notifies to shoot unhappy people
-        /// </summary>
-        public int bang(int shoot)
-        {
-            return shoot;
-        }
-
-
         public int stepper = 0;
-        /// <summary>
-        //sends to motor
-        /// </summary>
-     /*   public void sendPort(SerialPort port, int x, int y, int shoot)
-        {   //36 good,40
-
-            if (stepper == 36)
-            {
-                this.my_serial.Write(Convert.ToString("s"));
-                this.my_serial.Write(Convert.ToString(x));
-                this.my_serial.Write(Convert.ToString(y));
-                this.my_serial.Write(Convert.ToString(180-y));
-                this.my_serial.Write(Convert.ToString(shoot));
-                Debug.WriteLine("x degree " + Convert.ToString(x));
-                Debug.WriteLine("y degree " + Convert.ToString(y));
-                Debug.WriteLine("shoot " + Convert.ToString(shoot));
-                //  Debug.WriteLine("stepper " + stepper);
-                stepper = 0;
-            }
-            stepper++;
-        } */
-
-        public void sendPort(SerialPort my_serial, int x, int y)
+        public void sendPort(SerialPort my_serial, int x, int y, int bullet)
         {//70
             if (stepper == 70)
             {
-                //   this.my_serial.Write(Convert.ToString('s'));
-                //   this.my_serial.Write(Convert.ToString(x));
-                this.my_serial.Write(Convert.ToString(x) + ":" + Convert.ToString(y));
+                this.my_serial.Write(Convert.ToString(x) + ":" + Convert.ToString(y) + ":" + Convert.ToString(bullet));
                 Debug.WriteLine("x degree " + Convert.ToString(x));
                 Debug.WriteLine("y degree " + Convert.ToString(y));
+                Debug.WriteLine("bullet " + Convert.ToString(bullet));
                 stepper = 0;
             }
             stepper++;
