@@ -715,7 +715,7 @@ namespace Microsoft.Samples.Kinect.FaceBasics
         public int stepper = 0;
         public void sendPort(SerialPort my_serial, int x, int y, int bullet)
         {//70
-            if (stepper == 70)
+            if (stepper == 45)
             {
                 this.my_serial.Write(Convert.ToString(x) + ":" + Convert.ToString(y) + ":" + Convert.ToString(bullet));
                 Debug.WriteLine("x degree " + Convert.ToString(x));
